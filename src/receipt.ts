@@ -241,7 +241,7 @@ export function renderReceiptPage(data: ReceiptData): string {
     <div class="crawler-detail">${pagesFormatted} pages × ${line.crawls} crawls/yr</div>`
   ).join('');
 
-  const shareUrl = `https://ai-scraping-receipt.workers.dev/receipt/${encodeURIComponent(domain)}`;
+  const shareUrl = `https://crawlerreceipt.com/receipt/${encodeURIComponent(domain)}`;
   const shareText = `AI crawlers owe ${domain} ${totalFormatted} in unpaid scraping fees.\n\nSee yours → ${shareUrl}\n\nDeploy HTTP 402 in 5 min: github.com/Josusanz/pay-per-crawl-worker`;
   const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
