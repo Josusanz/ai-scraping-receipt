@@ -209,6 +209,7 @@ export function renderLanding(): string {
 
     <div class="footer-links">
       Protect your site with <a href="https://github.com/Josusanz/pay-per-crawl-worker" target="_blank" rel="noopener">pay-per-crawl-worker</a> →
+      · <a href="https://github.com/Josusanz/ai-scraping-receipt" target="_blank" rel="noopener">source code</a>
     </div>
   </div>
 
@@ -503,7 +504,10 @@ export function renderReceiptPage(data: ReceiptData): string {
       <a href="https://github.com/Josusanz/pay-per-crawl-worker" target="_blank" rel="noopener">pay-per-crawl-worker</a>
     </div>
 
-    <div class="source-note">${sourceNote}</div>
+    <div class="source-note">
+      ${sourceNote} ·
+      <a href="https://github.com/Josusanz/ai-scraping-receipt" target="_blank" rel="noopener" style="color:inherit;opacity:0.7">source code</a>
+    </div>
   </div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
