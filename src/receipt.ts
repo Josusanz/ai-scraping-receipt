@@ -289,6 +289,15 @@ export function renderLanding(): string {
           Crawlers that support the protocol pay; the rest get blocked.
         </div>
       </div>
+      <div class="explainer-item">
+        <div class="explainer-q">How accurate are these numbers?</div>
+        <div class="explainer-a">
+          These are estimates based on Common Crawl data (when available) or algorithmic estimates.
+          We assume 12 crawls/year (1 per month) and $0.01/page — the example price suggested by Cloudflare.
+          Real crawler behavior varies: popular sites may be crawled daily, while smaller sites less frequently.
+          The numbers illustrate the value extracted, not exact billing amounts.
+        </div>
+      </div>
     </div>
 
     <div class="footer-links">
@@ -519,6 +528,21 @@ export function renderReceiptPage(data: ReceiptData): string {
       margin-top: 0.75rem;
       opacity: 0.6;
     }
+    .disclaimer {
+      background: rgba(251, 191, 36, 0.06);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      border-radius: 2px;
+      padding: 0.9rem;
+      margin-top: 1.25rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.6;
+      text-align: left;
+    }
+    .disclaimer strong {
+      color: var(--yellow);
+      font-weight: 700;
+    }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -568,6 +592,13 @@ export function renderReceiptPage(data: ReceiptData): string {
         <div>Method: <span class="method">HTTP 402 Payment Required</span></div>
         <div>Protect your site: <a href="https://github.com/Josusanz/pay-per-crawl-worker" target="_blank" rel="noopener">github.com/Josusanz/pay-per-crawl-worker</a></div>
       </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>⚠ Estimate Disclaimer:</strong> These numbers are estimates based on ${source === 'estimate' ? 'algorithmic approximation' : 'Common Crawl index data'}.
+      We assume 12 crawls/year (1 per month) and $0.01/page (Cloudflare's example price).
+      Real crawler behavior varies significantly — popular sites may be crawled daily, smaller sites less often.
+      These figures illustrate the value being extracted, not precise billing amounts.
     </div>
 
     <div class="actions">
