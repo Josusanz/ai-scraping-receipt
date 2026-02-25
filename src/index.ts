@@ -140,7 +140,12 @@ export default {
 
     // GET /demo
     if (path === '/demo' || path.startsWith('/demo/')) {
-      return demoWorker.fetch(request);
+      // Rewrite the path for the demo worker (remove /demo prefix)
+      const demoPath = path === '/demo' ? '/' : path.replace(/^\/demo/, '');
+      const demoUrl = new URL(request.url);
+      demoUrl.pathname = demoPath;
+      const demoRequest = new Request(demoUrl.toString(), request);
+      return demoWorker.fetch(demoRequest);
     }
 
     // GET /
