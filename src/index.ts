@@ -1,10 +1,11 @@
 import { renderLanding, renderReceiptPage, ReceiptData, CrawlerLine } from './receipt';
 import { KNOWN_AI_CRAWLERS } from './crawlers';
+import demoWorker from './demo';
 
 const CRAWLS_PER_YEAR = 12;
 const PRICE_PER_PAGE = 0.01;
 const MIN_PAGES = 50;
-const MAX_PAGES = 500_000;
+const MAX_PAGES = 20_000_000;
 
 // Recent Common Crawl indexes to query in parallel (most recent first)
 const CC_INDEXES = [
@@ -13,6 +14,23 @@ const CC_INDEXES = [
   'CC-MAIN-2024-46',
   'CC-MAIN-2024-42',
 ];
+
+// Minimum page floors for well-known sites that heavily restrict crawlers.
+// If CC data falls below these floors, we use the floor as an estimate.
+const KNOWN_FLOORS: Record<string, number> = {
+  'x.com':           2_000_000,
+  'twitter.com':     2_000_000,
+  'reddit.com':      5_000_000,
+  'instagram.com':   3_000_000,
+  'facebook.com':    3_000_000,
+  'linkedin.com':    1_000_000,
+  'tiktok.com':        500_000,
+  'netflix.com':       200_000,
+  'twitch.tv':       1_000_000,
+  'pinterest.com':   2_000_000,
+  'whatsapp.com':      100_000,
+  'telegram.org':      100_000,
+};
 
 // Deterministic domain-based fallback estimate (100–10,000 pages)
 function estimatePages(domain: string): number {
@@ -53,12 +71,20 @@ async function fetchPageCount(domain: string): Promise<{ pages: number; source: 
 
     // Each block ≈ 1,300 actual CDX records (calibrated on real data)
     const maxBlocks = Math.max(...results);
-    if (maxBlocks > 0) {
-      const count = Math.min(Math.max(maxBlocks * 1300, MIN_PAGES), MAX_PAGES);
-      return { pages: count, source: 'commoncrawl' };
+    const ccPages = maxBlocks > 0 ? Math.min(maxBlocks * 1300, MAX_PAGES) : 0;
+    const knownFloor = KNOWN_FLOORS[domain] ?? 0;
+
+    if (ccPages > 0 && ccPages >= knownFloor) {
+      // CC data looks representative — trust it
+      return { pages: Math.max(ccPages, MIN_PAGES), source: 'commoncrawl' };
     }
 
-    // No results across any index — domain likely blocks Common Crawl
+    if (knownFloor > 0) {
+      // CC data is absent or below the known floor — site likely blocks crawlers
+      return { pages: Math.min(knownFloor, MAX_PAGES), source: 'estimate' };
+    }
+
+    // Unknown site with no CC data — use deterministic hash estimate
     return { pages: estimatePages(domain), source: 'estimate' };
   } catch (_) {
     clearTimeout(tid);
@@ -111,6 +137,11 @@ export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
+
+    // GET /demo
+    if (path === '/demo' || path.startsWith('/demo/')) {
+      return demoWorker.fetch(request);
+    }
 
     // GET /
     if (path === '/' || path === '') {

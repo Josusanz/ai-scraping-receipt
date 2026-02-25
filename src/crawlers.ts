@@ -21,3 +21,13 @@ export const KNOWN_AI_CRAWLERS: KnownCrawler[] = [
   { name: 'AI2Bot', company: 'Allen Institute', userAgentPatterns: ['AI2Bot'] },
   { name: 'Diffbot', company: 'Diffbot', userAgentPatterns: ['Diffbot'] },
 ];
+
+export function getCrawlerName(userAgent: string): string | null {
+  if (!userAgent) return null;
+  for (const crawler of KNOWN_AI_CRAWLERS) {
+    for (const pattern of crawler.userAgentPatterns) {
+      if (userAgent.includes(pattern)) return crawler.name;
+    }
+  }
+  return null;
+}
