@@ -6,6 +6,14 @@ const PRICE_PER_PAGE = 0.01;
 const MIN_PAGES = 50;
 const MAX_PAGES = 500_000;
 
+// Recent Common Crawl indexes to query in parallel (most recent first)
+const CC_INDEXES = [
+  'CC-MAIN-2025-05',
+  'CC-MAIN-2024-51',
+  'CC-MAIN-2024-46',
+  'CC-MAIN-2024-42',
+];
+
 // Deterministic domain-based fallback estimate (100–10,000 pages)
 function estimatePages(domain: string): number {
   let h = 5381;
@@ -15,47 +23,46 @@ function estimatePages(domain: string): number {
   return (h % 9901) + 100;
 }
 
+// Query a single CC index and return block count (0 on any failure)
+async function queryIndex(index: string, domain: string, signal: AbortSignal): Promise<number> {
+  try {
+    const url =
+      `https://index.commoncrawl.org/${index}-index` +
+      `?url=*.${encodeURIComponent(domain)}&showNumPages=true`;
+    const res = await fetch(url, { signal });
+    if (!res.ok) return 0;
+    const text = (await res.text()).trim();
+    // Response: {"pages": P, "pageSize": 5, "blocks": B}
+    const parsed = JSON.parse(text) as Record<string, unknown>;
+    return typeof parsed.blocks === 'number' ? parsed.blocks : 0;
+  } catch (_) {
+    return 0;
+  }
+}
+
 async function fetchPageCount(domain: string): Promise<{ pages: number; source: 'commoncrawl' | 'estimate' }> {
   const controller = new AbortController();
-  const tid = setTimeout(() => controller.abort(), 3000);
+  const tid = setTimeout(() => controller.abort(), 8000);
 
   try {
-    const cdxUrl =
-      `https://index.commoncrawl.org/CC-MAIN-2024-51-index` +
-      `?url=*.${encodeURIComponent(domain)}&output=json&limit=1&showNumPages=true`;
-
-    const res = await fetch(cdxUrl, { signal: controller.signal });
+    // Query all indexes in parallel; take the highest block count found
+    const results = await Promise.all(
+      CC_INDEXES.map(idx => queryIndex(idx, domain, controller.signal))
+    );
     clearTimeout(tid);
 
-    if (!res.ok) {
-      return { pages: Math.max(estimatePages(domain), MIN_PAGES), source: 'estimate' };
-    }
-
-    const text = (await res.text()).trim();
-
-    // Response may be a JSON object {"pages": N, "pageSize": M}
-    try {
-      const parsed = JSON.parse(text) as Record<string, unknown>;
-      if (typeof parsed.pages === 'number') {
-        const pageSize = typeof parsed.pageSize === 'number' ? parsed.pageSize : 5;
-        const count = Math.min(Math.max(parsed.pages * pageSize, MIN_PAGES), MAX_PAGES);
-        return { pages: count, source: 'commoncrawl' };
-      }
-    } catch (_) {
-      // not a JSON object
-    }
-
-    // Response may be a plain integer (number of CDX pages)
-    const n = parseInt(text, 10);
-    if (!isNaN(n) && n >= 0) {
-      const count = Math.min(Math.max(n * 5, MIN_PAGES), MAX_PAGES);
+    // Each block ≈ 1,300 actual CDX records (calibrated on real data)
+    const maxBlocks = Math.max(...results);
+    if (maxBlocks > 0) {
+      const count = Math.min(Math.max(maxBlocks * 1300, MIN_PAGES), MAX_PAGES);
       return { pages: count, source: 'commoncrawl' };
     }
 
-    return { pages: Math.max(estimatePages(domain), MIN_PAGES), source: 'estimate' };
+    // No results across any index — domain likely blocks Common Crawl
+    return { pages: estimatePages(domain), source: 'estimate' };
   } catch (_) {
     clearTimeout(tid);
-    return { pages: Math.max(estimatePages(domain), MIN_PAGES), source: 'estimate' };
+    return { pages: estimatePages(domain), source: 'estimate' };
   }
 }
 

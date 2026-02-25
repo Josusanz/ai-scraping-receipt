@@ -248,8 +248,8 @@ export function renderReceiptPage(data: ReceiptData): string {
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
 
   const sourceNote = source === 'estimate'
-    ? '* Estimated (Common Crawl unavailable)'
-    : `* Source: Common Crawl CDX Index ${year}`;
+    ? '* This domain blocks Common Crawl crawlers — page count estimated'
+    : `* Source: Common Crawl CDX Index ${year} (4 indexes queried)`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -457,7 +457,7 @@ export function renderReceiptPage(data: ReceiptData): string {
       <div class="receipt-header">
         <div class="receipt-warning">⚠  AI SCRAPING RECEIPT  ⚠</div>
         <div class="receipt-domain">${domain}</div>
-        <div class="receipt-meta">${year} · UNPAID ESTIMATE · ${pagesFormatted} PAGES INDEXED</div>
+        <div class="receipt-meta">${year} · UNPAID ESTIMATE · ${source === 'estimate' ? '~' : ''}${pagesFormatted} PAGES ${source === 'estimate' ? 'ESTIMATED' : 'INDEXED'}</div>
       </div>
 
       <div class="crawler-section">
