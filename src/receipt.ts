@@ -159,15 +159,62 @@ export function renderLanding(): string {
       letter-spacing: 0.05em;
     }
     .step-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+    .github-link {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      color: var(--muted);
+      transition: color 0.15s;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      text-decoration: none;
+    }
+    .github-link:hover { color: var(--cyan); text-decoration: none; }
+    .github-link svg { width: 20px; height: 20px; display: block; flex-shrink: 0; }
+    .github-link span { display: none; }
+    @media (min-width: 640px) { .github-link span { display: inline; } }
     .footer-links {
       margin-top: 3rem;
       font-size: 0.75rem;
       color: var(--muted);
     }
     .footer-links a { color: var(--cyan); }
+    .explainer {
+      border-top: 1px dashed var(--border);
+      padding-top: 2rem;
+      margin-top: 0.5rem;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .explainer-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .explainer-item { display: flex; flex-direction: column; gap: 0.3rem; }
+    .explainer-q {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    .explainer-a {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
+  <a href="https://github.com/Josusanz/ai-scraping-receipt" class="github-link" target="_blank" rel="noopener" aria-label="View source on GitHub">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+    <span>source code</span>
+  </a>
   <div class="landing">
     <div class="badge">HTTP 402 · PAY PER CRAWL</div>
     <h1>AI Scraping<br><span>Receipt Generator</span></h1>
@@ -207,9 +254,45 @@ export function renderLanding(): string {
       </div>
     </div>
 
+    <div class="explainer">
+      <div class="explainer-title">WHAT IS THIS?</div>
+      <div class="explainer-item">
+        <div class="explainer-q">What are AI crawlers?</div>
+        <div class="explainer-a">
+          Companies like OpenAI, Anthropic, Google, Meta and others send automated bots
+          (GPTBot, ClaudeBot, Googlebot-Extended…) to download the content of millions of websites.
+          They use this data to train their AI models — without paying for it.
+        </div>
+      </div>
+      <div class="explainer-item">
+        <div class="explainer-q">What is AI scraping?</div>
+        <div class="explainer-a">
+          When these bots visit your site, they copy your articles, products, source code or any
+          other content and feed it into AI training datasets. They do this repeatedly, at scale,
+          and without asking permission or compensating you for the value they extract.
+        </div>
+      </div>
+      <div class="explainer-item">
+        <div class="explainer-q">Why does the receipt matter?</div>
+        <div class="explainer-a">
+          It puts a concrete number on what AI companies are taking from your site.
+          If every page crawl had a price tag — $0.01/page, 12 times a year, across 15 bots —
+          what would the bill look like? Now you can show it.
+        </div>
+      </div>
+      <div class="explainer-item">
+        <div class="explainer-q">Can I actually charge them?</div>
+        <div class="explainer-a">
+          Yes — with HTTP 402. Deploy
+          <a href="https://github.com/Josusanz/pay-per-crawl-worker" target="_blank" rel="noopener">pay-per-crawl-worker</a>
+          on your site to respond with a payment requirement whenever an AI bot visits.
+          Crawlers that support the protocol pay; the rest get blocked.
+        </div>
+      </div>
+    </div>
+
     <div class="footer-links">
       Protect your site with <a href="https://github.com/Josusanz/pay-per-crawl-worker" target="_blank" rel="noopener">pay-per-crawl-worker</a> →
-      · <a href="https://github.com/Josusanz/ai-scraping-receipt" target="_blank" rel="noopener">source code</a>
     </div>
   </div>
 
