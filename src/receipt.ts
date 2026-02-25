@@ -63,9 +63,20 @@ export function renderLanding(): string {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Scraping Receipt — How much do AI crawlers owe your site?</title>
   <meta name="description" content="Find out how much AI crawlers owe your website in unpaid scraping fees. Real data from Common Crawl.">
-  <meta property="og:title" content="AI Scraping Receipt">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://crawlerreceipt.com/">
+  <meta property="og:title" content="AI Scraping Receipt — How much do AI crawlers owe your site?">
   <meta property="og:description" content="Find out how much AI crawlers owe your website in unpaid scraping fees. Real data from Common Crawl.">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://crawlerreceipt.com/og-image.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://crawlerreceipt.com/">
+  <meta name="twitter:title" content="AI Scraping Receipt — How much do AI crawlers owe your site?">
+  <meta name="twitter:description" content="Find out how much AI crawlers owe your website in unpaid scraping fees. Real data from Common Crawl.">
+  <meta name="twitter:image" content="https://crawlerreceipt.com/og-image.png">
   <style>
     ${BASE_CSS}
     .landing { max-width: 600px; width: 100%; text-align: center; }
@@ -350,12 +361,20 @@ export function renderReceiptPage(data: ReceiptData): string {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Scraping Receipt — ${domain}</title>
   <meta name="description" content="AI crawlers owe ${domain} an estimated ${totalFormatted}/year in unpaid scraping fees.">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="${shareUrl}">
   <meta property="og:title" content="AI Scraping Receipt — ${domain}">
   <meta property="og:description" content="AI crawlers owe ${domain} an estimated ${totalFormatted}/year in unpaid scraping fees.">
-  <meta property="og:url" content="${shareUrl}">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://crawlerreceipt.com/og-image.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="${shareUrl}">
   <meta name="twitter:title" content="AI Scraping Receipt — ${domain}">
   <meta name="twitter:description" content="AI crawlers owe ${domain} an estimated ${totalFormatted}/year in unpaid scraping fees.">
+  <meta name="twitter:image" content="https://crawlerreceipt.com/og-image.png">
   <style>
     ${BASE_CSS}
     .page { width: 100%; max-width: 560px; }

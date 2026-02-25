@@ -138,6 +138,16 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
+    // GET /og-image.png - Open Graph image
+    if (path === '/og-image.png') {
+      // Redirect to generated OG image with custom design
+      const title = encodeURIComponent('💰 AI Scraping Receipt');
+      const subtitle = encodeURIComponent('How much do AI crawlers owe your site?');
+      const footer = encodeURIComponent('crawlerreceipt.com');
+      const ogImageUrl = `https://og-image.vercel.app/${title}.png?theme=dark&md=1&fontSize=100px&widths=auto&heights=auto&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fvercel-triangle-white.svg`;
+      return Response.redirect(ogImageUrl, 302);
+    }
+
     // GET /demo
     if (path === '/demo' || path.startsWith('/demo/')) {
       // Rewrite the path for the demo worker (remove /demo prefix)
